@@ -33,20 +33,20 @@
   var form = window.setup.form;
 
 
-  var effectSlider = editImg.querySelector('.effect-level');
+  var slider = editImg.querySelector('.effect-level');
 
-  var lineSlider = effectSlider.querySelector('.effect-level__line');
-  var pinSlider = effectSlider.querySelector('.effect-level__pin');
-  var depthLine = effectSlider.querySelector('.effect-level__depth');
-  var levelValue = effectSlider.querySelector('.effect-level__value');
+  var lineSlider = slider.querySelector('.effect-level__line');
+  var pinSlider = slider.querySelector('.effect-level__pin');
+  var depthLine = slider.querySelector('.effect-level__depth');
+  var levelValue = slider.querySelector('.effect-level__value');
 
   var currentFilter;
 
-
+  levelValue.value = EFFECT_LEVEL_DEFAULT;
   var inputs = form.querySelectorAll('input[type="radio"]');
 
 
-  effectSlider.classList.add('hidden');
+  slider.classList.add('hidden');
 
   inputs.forEach(function (item) {
     item.addEventListener('change', function () {
@@ -56,7 +56,7 @@
       levelValue.value = EFFECT_LEVEL_DEFAULT;
       currentFilter = item.value;
       addFilter(item.value);
-      checkSelectedFilter(item, effectSlider, imgPreview);
+      checkSelectedFilter(item, slider, imgPreview);
 
       pinSlider.style.left = lineSlider.offsetWidth + 'px';
       depthLine.style.width = lineSlider.offsetWidth + 'px';
@@ -121,5 +121,11 @@
       return el.classList.add('hidden');
     }
     return el.classList.remove('hidden');
+  };
+
+  window.effect = {
+    EFFECT_LEVEL_DEFAULT: EFFECT_LEVEL_DEFAULT,
+    slider: slider,
+    levelValue: levelValue
   };
 })();

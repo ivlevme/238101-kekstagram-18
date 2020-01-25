@@ -4,7 +4,7 @@
   var TIME_UNIT = ' мс';
   var Url = {
     LOAD: 'https://js.dump.academy/kekstagram/data',
-    SAVE: ''
+    SAVE: 'https://js.dump.academy/kekstagram'
   };
 
   var MethodHTTP = {
@@ -55,7 +55,10 @@
     xhr.send();
   };
 
-  var onSave = function () {
+  var onSave = function (onSuccess, onError, data) {
+    var xhr = setupXHR(onSuccess, onError);
+    xhr.open(MethodHTTP.POST, Url.SAVE);
+    xhr.send(data);
   };
 
 

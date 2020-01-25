@@ -7,35 +7,36 @@
   var textFieldset = editImg.querySelector('.img-upload__text');
 
   var textHashtags = textFieldset.querySelector('.text__hashtags');
-  // var textDescription = textFieldset.querySelector('.text__description');
+  var textDescription = textFieldset.querySelector('.text__description');
 
   var validHashtags = function (text, el) {
-    var hashtags = text.split(' ');
+    if (text) {
+      var hashtags = text.split(' ');
 
-    if (!checkStartHashtag(hashtags)) {
-      return el.setCustomValidity('Хэш-тег должен начинаться с #');
+      if (!checkStartHashtag(hashtags)) {
+        return el.setCustomValidity('Хэш-тег должен начинаться с #');
+      }
+
+      if (!checkMinLengthHashtag(hashtags)) {
+        return el.setCustomValidity('Хеш-тег не может состоять только из одной решётки');
+      }
+
+      if (!checkMaxLengthHashtag(hashtags)) {
+        return el.setCustomValidity('максимальная длина одного хэш-тега 20 символов, включая решётку');
+      }
+
+      if (!checkSpaceHashtag(hashtags)) {
+        return el.setCustomValidity('хэш-теги разделяются пробелами');
+      }
+
+      if (!checkRepeatHashtag(hashtags)) {
+        return el.setCustomValidity('один и тот же хэш-тег не может быть использован дважды');
+      }
+
+      if (hashtags.length > 5) {
+        return el.setCustomValidity('нельзя указать больше пяти хэш-тегов');
+      }
     }
-
-    if (!checkMinLengthHashtag(hashtags)) {
-      return el.setCustomValidity('Хеш-тег не может состоять только из одной решётки');
-    }
-
-    if (!checkMaxLengthHashtag(hashtags)) {
-      return el.setCustomValidity('максимальная длина одного хэш-тега 20 символов, включая решётку');
-    }
-
-    if (!checkSpaceHashtag(hashtags)) {
-      return el.setCustomValidity('хэш-теги разделяются пробелами');
-    }
-
-    if (!checkRepeatHashtag(hashtags)) {
-      return el.setCustomValidity('один и тот же хэш-тег не может быть использован дважды');
-    }
-
-    if (hashtags.length > 5) {
-      return el.setCustomValidity('нельзя указать больше пяти хэш-тегов');
-    }
-
 
     return el.setCustomValidity('');
   };
@@ -88,6 +89,7 @@
 
   window.text = {
     validHashtags: validHashtags,
-    textHashtags: textHashtags
+    textHashtags: textHashtags,
+    textDescription: textDescription
   };
 })();

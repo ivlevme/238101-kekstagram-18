@@ -15,7 +15,8 @@
     genPreview(data);
   };
 
-  var onError = function () {
+  var onError = function (message) {
+    console.log(message);
   };
 
   load(loadData, onError);
