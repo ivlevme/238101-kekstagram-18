@@ -13,14 +13,19 @@
   var body = document.querySelector('body');
   var bigPicture = document.querySelector('.big-picture');
 
+  var delNodeChilds = window.setup.delNodeChilds;
+
   var socialContainer = bigPicture.querySelector('.big-picture__social');
   var imgContainer = bigPicture.querySelector('.big-picture__img');
   var cancelButton = bigPicture.querySelector('.big-picture__cancel');
 
   var commentsContainer = socialContainer.querySelector('.social__comments');
   var likesCount = socialContainer.querySelector('.likes-count');
+  var commentsCountСontainer = socialContainer.querySelector('.social__comment-count');
   var description = socialContainer.querySelector('.social__caption');
   var buttonMoreComments = socialContainer.querySelector('.social__comments-loader');
+
+  var allCommentsCount = commentsCountСontainer.querySelector('.comments-count');
 
   var imgBig = imgContainer.querySelector('img');
 
@@ -28,6 +33,7 @@
 
 
   var allComments;
+  var amountVisibleComments = 0;
 
   var genPicture = function (pictures) {
     var fragment = new DocumentFragment();
@@ -56,11 +62,12 @@
 
   var genBigPicture = function (picture) {
     body.classList.add('modal-open');
-    buttonMoreComments.classList.add('visually-hidden');
+
 
     imgBig.src = picture.url;
     likesCount.textContent = picture.likes;
     description.textContent = picture.description;
+    allCommentsCount.textContent = picture.comments.length;
 
     allComments = picture.comments.slice();
 
@@ -83,6 +90,8 @@
 
   var onCancelClick = function () {
     body.classList.remove('modal-open');
+    buttonMoreComments.classList.add('visually-hidden');
+    amountVisibleComments = 0;
 
     bigPicture.classList.add('hidden');
 
@@ -116,16 +125,17 @@
     return fragment;
   };
 
-  var delNodeChilds = function (node) {
-    while (node.firstChild) {
-      node.removeChild(node.firstChild);
-    }
-  };
 
   var addComments = function (comments) {
     if (comments.length >= COUNT_VISIBLE_COMMENTS) {
+      amountVisibleComments += COUNT_VISIBLE_COMMENTS;
+      updateCountComments(amountVisibleComments);
+
       return genComments(comments.splice(START_INDEX_MASSIVE, COUNT_VISIBLE_COMMENTS));
     }
+
+    amountVisibleComments += comments.length;
+    updateCountComments(amountVisibleComments);
 
     return genComments(comments.splice(START_INDEX_MASSIVE, comments.length));
   };
@@ -137,6 +147,11 @@
     if (allComments.length === LENGTH_EMPTY_MASSIVE) {
       buttonMoreComments.classList.add('visually-hidden');
     }
+  };
+
+  var updateCountComments = function (count) {
+    commentsCountСontainer.removeChild(commentsCountСontainer.firstChild);
+    commentsCountСontainer.prepend(count + ' из ');
   };
 
 

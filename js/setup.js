@@ -11,12 +11,20 @@
   var previewContainer = editImg.querySelector('.img-upload__preview');
   var imgPreview = previewContainer.querySelector('img');
 
+
+  var delNodeChilds = function (node) {
+    while (node.firstChild) {
+      node.removeChild(node.firstChild);
+    }
+  };
+
   window.setup = {
     main: main,
     form: form,
     uploadButton: uploadButton,
     uploadFile: uploadFile,
     editImg: editImg,
-    imgPreview: imgPreview
+    imgPreview: imgPreview,
+    delNodeChilds: delNodeChilds
   };
 })();

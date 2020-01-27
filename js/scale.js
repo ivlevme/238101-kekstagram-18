@@ -5,7 +5,7 @@
   var SCALE_DEFAULT = 100;
 
   var ScaleLimit = {
-    MIN: 0,
+    MIN: 25,
     MAX: 100
   };
 

@@ -3,20 +3,22 @@
 (function () {
   var load = window.backend.load;
 
-  var genPicture = window.picture.genPicture;
 
-  var genPreview = window.preview.genPreview;
+  var updatePictures = window.filter.updatePictures;
 
-  var picturesContainer = document.querySelector('.pictures');
+  var filtersContainer = document.querySelector('.img-filters');
+
+  var selectedFilter = document.querySelector('.img-filters__button--active');
 
 
   var loadData = function (data) {
-    picturesContainer.appendChild(genPicture(data));
-    genPreview(data);
+    updatePictures(selectedFilter.id, data);
+
+    filtersContainer.classList.remove('img-filters--inactive');
   };
 
   var onError = function (message) {
-    console.log(message);
+    throw new Error(message);
   };
 
   load(loadData, onError);

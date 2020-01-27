@@ -1,6 +1,8 @@
 'use strict';
 
 (function () {
+  var FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
+
   var SCALE_DEFAULT = window.scale.SCALE_DEFAULT;
   var EFFECT_LEVEL_DEFAULT = window.effect.EFFECT_LEVEL_DEFAULT;
 
@@ -34,6 +36,9 @@
     .content
     .querySelector('.error');
 
+  var effectsPictures = editImg.querySelectorAll('.effects__preview');
+
+
   var successContainer;
   var successInner;
   var successButton;
@@ -46,6 +51,7 @@
   var cancelButton = editImg.querySelector('.cancel');
 
   uploadFile.addEventListener('change', function () {
+    changePreview();
     editImg.classList.remove('hidden');
 
     addScaleImg(inputScale, SCALE_DEFAULT, imgPreview);
@@ -194,5 +200,31 @@
 
     document.removeEventListener('keydown', onFormEscPress);
     cancelButton.removeEventListener('click', onButtonClick);
+  };
+
+  var changePreview = function () {
+    var file = uploadFile.files[0];
+
+    if (file) {
+      var fileName = file.name.toLowerCase();
+
+      var matches = FILE_TYPES.some(function (it) {
+        return fileName.endsWith(it);
+      });
+
+
+      if (matches) {
+        var fileReader = new FileReader();
+
+        fileReader.addEventListener('load', function () {
+          imgPreview.src = fileReader.result;
+          effectsPictures.forEach(function (effectPicture) {
+            effectPicture.style.backgroundImage = 'url(' + fileReader.result + ')';
+          });
+        });
+
+        fileReader.readAsDataURL(file);
+      }
+    }
   };
 })();
