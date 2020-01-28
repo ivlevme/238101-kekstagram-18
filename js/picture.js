@@ -1,9 +1,12 @@
 'use strict';
 
 (function () {
+  var Key = window.setup.Key;
+
   var COUNT_VISIBLE_COMMENTS = 5;
   var LENGTH_EMPTY_MASSIVE = 0;
   var START_INDEX_MASSIVE = 0;
+  var TEXT_FOR_COUNT_COMMENTS = ' из ';
 
 
   var pictureTemplate = document.querySelector('#picture')
@@ -101,7 +104,7 @@
   };
 
   var onCancelEscPress = function (evt) {
-    if (evt.key === 'Escape') {
+    if (evt.key === Key.ESC) {
       onCancelClick();
     }
   };
@@ -151,7 +154,7 @@
 
   var updateCountComments = function (count) {
     commentsCountСontainer.removeChild(commentsCountСontainer.firstChild);
-    commentsCountСontainer.prepend(count + ' из ');
+    commentsCountСontainer.prepend(count + TEXT_FOR_COUNT_COMMENTS);
   };
 
 

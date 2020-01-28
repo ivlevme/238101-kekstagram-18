@@ -1,6 +1,10 @@
 'use strict';
 
 (function () {
+  var PERCENT_SYMBOL = window.setup.PERCENT_SYMBOL;
+  var ParenthesisText = window.setup.ParenthesisText;
+  var CssStyle = window.setup.CssStyle;
+
   var SCALE_STEP = 25;
   var SCALE_DEFAULT = 100;
 
@@ -36,8 +40,9 @@
   };
 
   var addScaleImg = function (input, quantity, img) {
-    input.value = quantity + '%';
-    img.style.transform = 'scale' + '(' + quantity / 100 + ')';
+    input.value = quantity + PERCENT_SYMBOL;
+    img.style.transform = CssStyle.SCALE + ParenthesisText.LEFT + quantity / ScaleLimit.MAX
+      + ParenthesisText.RIGHT;
   };
 
   var validScale = function (value) {
@@ -65,7 +70,6 @@
     smallerControl: smallerControl,
     valueScale: valueScale,
     inputScale: inputScale,
-
     onControlClick: onControlClick,
     addScaleImg: addScaleImg
   };

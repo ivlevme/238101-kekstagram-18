@@ -1,10 +1,13 @@
 'use strict';
 
 (function () {
-  var FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
-
   var SCALE_DEFAULT = window.scale.SCALE_DEFAULT;
   var EFFECT_LEVEL_DEFAULT = window.effect.EFFECT_LEVEL_DEFAULT;
+  var Key = window.setup.Key;
+  var ParenthesisText = window.setup.ParenthesisText;
+  var CssStyle = window.setup.CssStyle;
+
+  var FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
 
   var save = window.backend.save;
 
@@ -170,7 +173,7 @@
   };
 
   var onAreaEscPress = function (evt) {
-    if (evt.key === 'Escape') {
+    if (evt.key === Key.ESC) {
       onAreaClick();
     }
   };
@@ -180,7 +183,7 @@
   };
 
   var onFormEscPress = function (evt) {
-    if (evt.key === 'Escape') {
+    if (evt.key === Key.ESC) {
       closePopup();
     }
   };
@@ -219,7 +222,8 @@
         fileReader.addEventListener('load', function () {
           imgPreview.src = fileReader.result;
           effectsPictures.forEach(function (effectPicture) {
-            effectPicture.style.backgroundImage = 'url(' + fileReader.result + ')';
+            effectPicture.style.backgroundImage = CssStyle.URL + ParenthesisText.LEFT
+              + fileReader.result + ParenthesisText.RIGHT;
           });
         });
 

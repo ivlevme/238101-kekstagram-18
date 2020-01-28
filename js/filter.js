@@ -4,6 +4,7 @@
   var COUNT_RANDOM_PICTURES = 10;
   var COUNT_DEL_ELEMENTS = 1;
   var START_INDEX_MASSIVE = 0;
+
   var Filter = {
     POPULAR: 'filter-popular',
     RANDOM: 'filter-random',
@@ -51,7 +52,7 @@
         var randomPictures = [];
 
         while (randomPictures.length < COUNT_RANDOM_PICTURES) {
-          var randomNumber = getRandomNumber(0, allPictures.length);
+          var randomNumber = getRandomNumber(START_INDEX_MASSIVE, allPictures.length);
           var currentPicture = allPictures.splice(randomNumber, COUNT_DEL_ELEMENTS);
           randomPictures.push(currentPicture[START_INDEX_MASSIVE]);
         }

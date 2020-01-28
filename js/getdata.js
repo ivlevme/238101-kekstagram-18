@@ -3,7 +3,6 @@
 (function () {
   var load = window.backend.load;
 
-
   var updatePictures = window.filter.updatePictures;
 
   var filtersContainer = document.querySelector('.img-filters');

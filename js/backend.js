@@ -2,6 +2,9 @@
 
 (function () {
   var TIME_UNIT = ' мс';
+  var MAX_TIMEOUT = 3000;
+  var TYPE_DATA = 'json';
+
   var Url = {
     LOAD: 'https://js.dump.academy/kekstagram/data',
     SAVE: 'https://js.dump.academy/kekstagram'
@@ -27,9 +30,9 @@
 
   var setupXHR = function (onSuccess, onError) {
     var xhr = new XMLHttpRequest();
-    xhr.responseType = 'json';
+    xhr.responseType = TYPE_DATA;
 
-    xhr.timeout = 3000;
+    xhr.timeout = MAX_TIMEOUT;
 
     xhr.addEventListener('load', function () {
       if (xhr.status === HttpStatus.OK) {

@@ -1,7 +1,13 @@
 'use strict';
 
 (function () {
+  var PIXEL_UNIT = window.setup.PIXEL_UNIT;
+  var PERCENT_SYMBOL = window.setup.PERCENT_SYMBOL;
+  var ParenthesisText = window.setup.ParenthesisText;
+
   var EFFECT_LEVEL_DEFAULT = 100;
+  var SCALE_MAX = 100;
+  var MIN_COORD = 0;
 
   var Effect = {
     CHROME: 'chrome',
@@ -25,6 +31,10 @@
     marvin: 100,
     phobos: 3,
     heat: 3
+  };
+
+  var Coord = function (x) {
+    this.x = x;
   };
 
 
@@ -58,35 +68,24 @@
       addFilter(item.value);
       checkSelectedFilter(item, slider, imgPreview);
 
-      pinSlider.style.left = lineSlider.offsetWidth + 'px';
-      depthLine.style.width = lineSlider.offsetWidth + 'px';
+      pinSlider.style.left = lineSlider.offsetWidth + PIXEL_UNIT;
+      depthLine.style.width = lineSlider.offsetWidth + PIXEL_UNIT;
     });
   });
 
   pinSlider.addEventListener('mousedown', function (evt) {
-    var startCoords = {
-      x: evt.clientX,
-    };
-
+    var startCoords = new Coord(evt.clientX);
 
     var onMouseMove = function (moveEVt) {
+      var shift = new Coord(startCoords.x - moveEVt.clientX);
+      startCoords = new Coord(moveEVt.clientX);
+      var currentCoords = new Coord(pinSlider.offsetLeft - shift.x);
 
-      var shift = {
-        x: startCoords.x - moveEVt.clientX
-      };
 
-      startCoords = {
-        x: moveEVt.clientX,
-      };
-
-      var currentCoords = {
-        x: pinSlider.offsetLeft - shift.x
-      };
-
-      if (currentCoords.x > 0 && currentCoords.x < lineSlider.offsetWidth) {
-        pinSlider.style.left = (currentCoords.x) + 'px';
-        depthLine.style.width = (currentCoords.x) + 'px';
-        levelValue.value = Math.round(currentCoords.x * 100 / lineSlider.offsetWidth);
+      if (currentCoords.x > MIN_COORD && currentCoords.x < lineSlider.offsetWidth) {
+        pinSlider.style.left = (currentCoords.x) + PIXEL_UNIT;
+        depthLine.style.width = (currentCoords.x) + PIXEL_UNIT;
+        levelValue.value = Math.round(currentCoords.x * SCALE_MAX / lineSlider.offsetWidth);
         addFilter(currentFilter);
       }
     };
@@ -103,15 +102,18 @@
 
 
   var addFilter = function (filter) {
-    var intensityEffect = levelValue.value * ScaleEffect[filter] / 100;
-    imgPreview.style.filter = CssEffect[filter] + '(' + (intensityEffect) + ')';
+    var intensityEffect = levelValue.value * ScaleEffect[filter] / SCALE_MAX;
+    imgPreview.style.filter = CssEffect[filter] + ParenthesisText.LEFT + (intensityEffect)
+      + ParenthesisText.RIGHT;
 
     if (filter === Effect.MARVIN) {
-      imgPreview.style.filter = CssEffect[filter] + '(' + (intensityEffect) + '%)';
+      imgPreview.style.filter = CssEffect[filter] + ParenthesisText.LEFT + (intensityEffect)
+        + PERCENT_SYMBOL + ParenthesisText.RIGHT;
     }
 
     if (filter === Effect.PHOBOS) {
-      imgPreview.style.filter = CssEffect[filter] + '(' + (intensityEffect) + 'px)';
+      imgPreview.style.filter = CssEffect[filter] + ParenthesisText.LEFT + (intensityEffect)
+        + PIXEL_UNIT + ParenthesisText.RIGHT;
     }
   };
 
