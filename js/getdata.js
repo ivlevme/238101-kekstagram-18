@@ -1,24 +1,46 @@
-'use strict';
+import Setup from './setup.js';
+import Filter from './filter.js';
 
-(function () {
-  var load = window.backend.load;
+const Url = Setup.Url;
+const updatePictures = Filter.updatePictures;
 
-  var updatePictures = window.filter.updatePictures;
-
-  var filtersContainer = document.querySelector('.img-filters');
-
-  var selectedFilter = document.querySelector('.img-filters__button--active');
+const filtersContainer = document.querySelector(`.img-filters`);
+const selectedFilter = document.querySelector(`.img-filters__button--active`);
 
 
-  var loadData = function (data) {
-    updatePictures(selectedFilter.id, data);
+fetch(Url.LOAD)
+  .then(checkStatus)
+  .then(renderPosts)
+  .catch((message) => onError(message));
 
-    filtersContainer.classList.remove('img-filters--inactive');
-  };
+// getPosts();
 
-  var onError = function (message) {
-    throw new Error(message);
-  };
 
-  load(loadData, onError);
-})();
+function onError(message) {
+  throw new Error(message);
+}
+
+function checkStatus(response) {
+  if (response.ok) {
+    return Promise.resolve(response.json());
+  }
+
+  return Promise.reject(response.status);
+}
+
+function renderPosts(posts) {
+  updatePictures(selectedFilter.id, posts);
+
+  filtersContainer.classList.remove(`img-filters--inactive`);
+}
+
+// async function getPosts() {
+//   let response = await fetch(Url.LOAD);
+//   if (response.ok) {
+//     let posts = await response.json();
+
+//     return renderPosts(posts);
+//   }
+
+//   return onError(response.status)
+// }

@@ -1,234 +1,223 @@
-'use strict';
-
-(function () {
-  var SCALE_DEFAULT = window.scale.SCALE_DEFAULT;
-  var EFFECT_LEVEL_DEFAULT = window.effect.EFFECT_LEVEL_DEFAULT;
-  var Key = window.setup.Key;
-  var ParenthesisText = window.setup.ParenthesisText;
-  var CssStyle = window.setup.CssStyle;
-
-  var FILE_TYPES = ['gif', 'jpg', 'jpeg', 'png'];
-
-  var save = window.backend.save;
-
-  var main = window.setup.main;
-  var form = window.setup.form;
-  var uploadButton = window.setup.uploadButton;
-  var uploadFile = window.setup.uploadFile;
-  var editImg = window.setup.editImg;
-  var imgPreview = window.setup.imgPreview;
-
-  var biggerControl = window.scale.biggerControl;
-  var smallerControl = window.scale.smallerControl;
-  var inputScale = window.scale.inputScale;
-  var addScaleImg = window.scale.addScaleImg;
-  var onControlClick = window.scale.onControlClick;
-
-  var slider = window.effect.slider;
-  var levelValue = window.effect.levelValue;
-
-  var validHashtags = window.text.validHashtags;
-  var textHashtags = window.text.textHashtags;
-  var textDescription = window.text.textDescription;
-
-  var successTemplate = document.querySelector('#success')
-    .content
-    .querySelector('.success');
-
-  var errorTemplate = document.querySelector('#error')
-    .content
-    .querySelector('.error');
-
-  var effectsPictures = editImg.querySelectorAll('.effects__preview');
+import Setup from './setup.js';
+import Scale from './scale.js';
+import Effect from './effect.js';
+import Text from './text.js';
 
 
-  var successContainer;
-  var successInner;
-  var successButton;
+const Key = Setup.Key;
+const ParenthesisText = Setup.ParenthesisText;
+const CssStyle = Setup.CssStyle;
+const main = Setup.main;
+const form = Setup.form;
+const uploadButton = Setup.uploadButton;
+const uploadFile = Setup.uploadFile;
+const editImg = Setup.editImg;
+const imgPreview = Setup.imgPreview;
+const Url = Setup.Url;
+const MethodHTTP = Setup.MethodHTTP;
 
-  var errorContainer;
-  var errorInner;
-  var errorButtons;
+const SCALE_DEFAULT = Scale.SCALE_DEFAULT;
+const biggerControl = Scale.biggerControl;
+const smallerControl = Scale.smallerControl;
+const inputScale = Scale.inputScale;
+const addScaleImg = Scale.addScaleImg;
+const onControlClick = Scale.onControlClick;
+
+const EFFECT_LEVEL_DEFAULT = Effect.EFFECT_LEVEL_DEFAULT;
+const slider = Effect.slider;
+const levelValue = Effect.levelValue;
+
+const validHashtags = Text.validHashtags;
+const textHashtags = Text.textHashtags;
+const textDescription = Text.textDescription;
+
+const FILE_TYPES = [`gif`, `jpg`, `jpeg`, `png`];
+const successTemplate = document.querySelector(`#success`)
+  .content
+  .querySelector(`.success`);
+
+const errorTemplate = document.querySelector(`#error`)
+  .content
+  .querySelector(`.error`);
+
+const effectsPictures = editImg.querySelectorAll(`.effects__preview`);
+const cancelButton = editImg.querySelector(`.cancel`);
 
 
-  var cancelButton = editImg.querySelector('.cancel');
+let successContainer;
+let successInner;
+let successButton;
 
-  uploadFile.addEventListener('change', function () {
-    changePreview();
-    editImg.classList.remove('hidden');
-
-    addScaleImg(inputScale, SCALE_DEFAULT, imgPreview);
-
-    levelValue.value = EFFECT_LEVEL_DEFAULT;
+let errorContainer;
+let errorInner;
+let errorButtons;
 
 
-    cancelButton.addEventListener('click', onButtonClick);
-    document.addEventListener('keydown', onFormEscPress);
-  });
+uploadFile.addEventListener(`change`, () => {
+  changePreview();
+  editImg.classList.remove(`hidden`);
 
-  textHashtags.addEventListener('focus', function () {
-    document.removeEventListener('keydown', onFormEscPress);
-  });
+  addScaleImg(inputScale, SCALE_DEFAULT, imgPreview);
 
-  textHashtags.addEventListener('blur', function () {
-    document.addEventListener('keydown', onFormEscPress);
-  });
+  levelValue.value = EFFECT_LEVEL_DEFAULT;
 
-  textDescription.addEventListener('focus', function () {
-    document.removeEventListener('keydown', onFormEscPress);
-  });
 
-  textDescription.addEventListener('blur', function () {
-    document.addEventListener('keydown', onFormEscPress);
-  });
+  cancelButton.addEventListener(`click`, onButtonClick);
+  document.addEventListener(`keydown`, onFormEscPress);
+});
 
-  smallerControl.addEventListener('click', onControlClick);
-  biggerControl.addEventListener('click', onControlClick);
+textHashtags.addEventListener(`focus`, () => document.removeEventListener(`keydown`, onFormEscPress));
+textHashtags.addEventListener(`blur`, () => document.addEventListener(`keydown`, onFormEscPress));
 
-  uploadButton.addEventListener('click', function () {
-    validHashtags(textHashtags.value, textHashtags);
-  });
+textDescription.addEventListener(`focus`, () => document.removeEventListener(`keydown`, onFormEscPress));
+textDescription.addEventListener(`blur`, () => document.addEventListener(`keydown`, onFormEscPress));
 
-  form.addEventListener('submit', function (evt) {
-    evt.preventDefault();
+smallerControl.addEventListener(`click`, onControlClick);
+biggerControl.addEventListener(`click`, onControlClick);
 
-    var formData = new FormData(form);
+uploadButton.addEventListener(`click`, () => validHashtags(textHashtags.value, textHashtags));
 
-    save(onSuccess, onSaveMistake, formData);
-  });
+form.addEventListener(`submit`, (evt) => {
+  evt.preventDefault();
 
-  var onSuccess = function () {
+  let formData = new FormData(form);
+
+  fetch(Url.SAVE, {
+    method: MethodHTTP.POST,
+    body: formData
+  })
+  .then((response) => onSuccess(response))
+  .catch(onSaveMistake);
+});
+
+
+function onSuccess(response) {
+  if (!response.ok) {
+    return Promise.reject(response.status);
+  }
+
+  closePopup();
+
+  successContainer = successTemplate.cloneNode(true);
+  successInner = successContainer.querySelector(`.success__inner`);
+  successButton = successContainer.querySelector(`.success__button`);
+
+  successButton.addEventListener(`click`, onAreaClick);
+
+  setupPopup(successContainer, successInner);
+  return Promise.resolve();
+}
+
+function onSaveMistake() {
+  closePopup();
+
+  errorContainer = errorTemplate.cloneNode(true);
+  errorInner = errorContainer.querySelector(`.error__inner`);
+  errorButtons = errorContainer.querySelectorAll(`.error__button`);
+
+  errorButtons.forEach((button) => button.addEventListener(`click`, onAreaClick));
+
+  setupPopup(errorContainer, errorInner);
+}
+
+function onMouseover() {
+  document.removeEventListener(`click`, onAreaClick);
+  document.removeEventListener(`keydown`, onAreaEscPress);
+}
+
+function onMouseout() {
+  document.addEventListener(`click`, onAreaClick);
+  document.addEventListener(`keydown`, onAreaEscPress);
+}
+
+function onAreaClick() {
+  if (successContainer) {
+    cleanPopup(successContainer, successInner);
+
+    successButton.removeEventListener(`click`, onAreaClick);
+  }
+
+  if (errorContainer) {
+    cleanPopup(errorContainer, errorInner);
+
+    errorButtons.forEach((button) => button.removeEventListener(`click`, onAreaClick));
+  }
+
+  document.removeEventListener(`click`, onAreaClick);
+  document.removeEventListener(`keydown`, onAreaEscPress);
+}
+
+function onAreaEscPress(evt) {
+  if (evt.key === Key.ESC) {
+    onAreaClick();
+  }
+}
+
+function onButtonClick() {
+  closePopup();
+}
+
+function onFormEscPress(evt) {
+  if (evt.key === Key.ESC) {
     closePopup();
+  }
+}
 
-    successContainer = successTemplate.cloneNode(true);
-    successInner = successContainer.querySelector('.success__inner');
-    successButton = successContainer.querySelector('.success__button');
-
-    successInner.addEventListener('mouseover', onMouseover);
-    successInner.addEventListener('mouseout', onMouseout);
-
-    successButton.addEventListener('click', onAreaClick);
-
-    main.appendChild(successContainer);
-
-    document.addEventListener('click', onAreaClick);
-    document.addEventListener('keydown', onAreaEscPress);
-  };
-
-  var onSaveMistake = function () {
-    closePopup();
-
-    errorContainer = errorTemplate.cloneNode(true);
-    errorInner = errorContainer.querySelector('.error__inner');
-    errorButtons = errorContainer.querySelectorAll('.error__button');
-
-    errorButtons.forEach(function (button) {
-      button.addEventListener('click', onAreaClick);
-    });
-
-    errorInner.addEventListener('mouseover', onMouseover);
-    errorInner.addEventListener('mouseout', onMouseout);
-
-    main.appendChild(errorContainer);
+function closePopup() {
+  editImg.classList.add(`hidden`);
+  form.reset();
+  uploadFile.value = ``;
 
 
-    document.addEventListener('click', onAreaClick);
-    document.addEventListener('keydown', onAreaEscPress);
-  };
+  imgPreview.className = ``;
+  imgPreview.style.filter = ``;
+  imgPreview.style.transform = ``;
 
-  var onMouseover = function () {
-    document.removeEventListener('click', onAreaClick);
-    document.removeEventListener('keydown', onAreaEscPress);
-  };
+  slider.classList.add(`hidden`);
+  levelValue.value = EFFECT_LEVEL_DEFAULT;
 
-  var onMouseout = function () {
-    document.addEventListener('click', onAreaClick);
-    document.addEventListener('keydown', onAreaEscPress);
-  };
+  document.removeEventListener(`keydown`, onFormEscPress);
+  cancelButton.removeEventListener(`click`, onButtonClick);
+}
 
-  var onAreaClick = function () {
-    if (successContainer) {
-      successContainer.remove();
+function changePreview() {
+  let file = uploadFile.files[0];
 
-      successInner.removeEventListener('mouseover', onMouseover);
-      successInner.removeEventListener('mouseout', onMouseout);
+  if (file) {
+    let fileName = file.name.toLowerCase();
 
-      successButton.removeEventListener('click', onAreaClick);
-    }
+    let matches = FILE_TYPES.some((it) => fileName.endsWith(it));
 
-    if (errorContainer) {
-      errorContainer.remove();
+    if (matches) {
+      let fileReader = new FileReader();
 
-      errorInner.removeEventListener('mouseover', onMouseover);
-      errorInner.removeEventListener('mouseout', onMouseout);
+      fileReader.addEventListener(`load`, () => {
+        imgPreview.src = fileReader.result;
 
-      errorButtons.forEach(function (button) {
-        button.removeEventListener('click', onAreaClick);
-      });
-    }
-
-
-    document.removeEventListener('click', onAreaClick);
-    document.removeEventListener('keydown', onAreaEscPress);
-  };
-
-  var onAreaEscPress = function (evt) {
-    if (evt.key === Key.ESC) {
-      onAreaClick();
-    }
-  };
-
-  var onButtonClick = function () {
-    closePopup();
-  };
-
-  var onFormEscPress = function (evt) {
-    if (evt.key === Key.ESC) {
-      closePopup();
-    }
-  };
-
-  var closePopup = function () {
-    editImg.classList.add('hidden');
-    form.reset();
-    uploadFile.value = '';
-
-
-    imgPreview.className = '';
-    imgPreview.style.filter = '';
-    imgPreview.style.transform = '';
-
-    slider.classList.add('hidden');
-    levelValue.value = EFFECT_LEVEL_DEFAULT;
-
-    document.removeEventListener('keydown', onFormEscPress);
-    cancelButton.removeEventListener('click', onButtonClick);
-  };
-
-  var changePreview = function () {
-    var file = uploadFile.files[0];
-
-    if (file) {
-      var fileName = file.name.toLowerCase();
-
-      var matches = FILE_TYPES.some(function (it) {
-        return fileName.endsWith(it);
-      });
-
-
-      if (matches) {
-        var fileReader = new FileReader();
-
-        fileReader.addEventListener('load', function () {
-          imgPreview.src = fileReader.result;
-          effectsPictures.forEach(function (effectPicture) {
-            effectPicture.style.backgroundImage = CssStyle.URL + ParenthesisText.LEFT
-              + fileReader.result + ParenthesisText.RIGHT;
-          });
+        effectsPictures.forEach((effectPicture) => {
+          effectPicture.style.backgroundImage = CssStyle.URL + ParenthesisText.LEFT
+            + fileReader.result + ParenthesisText.RIGHT;
         });
+      });
 
-        fileReader.readAsDataURL(file);
-      }
+      fileReader.readAsDataURL(file);
     }
-  };
-})();
+  }
+}
+
+function cleanPopup(container, elements) {
+  container.remove();
+
+  elements.removeEventListener(`mouseover`, onMouseover);
+  elements.removeEventListener(`mouseout`, onMouseout);
+}
+
+function setupPopup(container, elements) {
+  elements.addEventListener(`mouseover`, onMouseover);
+  elements.addEventListener(`mouseout`, onMouseout);
+
+  main.appendChild(container);
+
+  document.addEventListener(`click`, onAreaClick);
+  document.addEventListener(`keydown`, onAreaEscPress);
+}

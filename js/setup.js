@@ -1,50 +1,75 @@
-'use strict';
+const PERCENT_SYMBOL = `%`;
+const PIXEL_UNIT = `px`;
+const Key = {
+  ESC: `Escape`
+};
+const ParenthesisText = {
+  LEFT: `(`,
+  RIGHT: `)`
+};
 
-(function () {
-  var PERCENT_SYMBOL = '%';
-  var PIXEL_UNIT = 'px';
-  var Key = {
-    ESC: 'Escape'
-  };
-  var ParenthesisText = {
-    LEFT: '(',
-    RIGHT: ')'
-  };
+const CssStyle = {
+  SCALE: `scale`,
+  URL: `url`
+};
 
-  var CssStyle = {
-    SCALE: 'scale',
-    URL: 'url'
-  };
+const Url = {
+  LOAD: `https://js.dump.academy/kekstagram/data`,
+  SAVE: `https://js.dump.academy/kekstagram`
+};
 
-  var main = document.querySelector('main');
-  var form = document.querySelector('.img-upload__form');
-  var uploadButton = form.querySelector('.img-upload__submit');
+const MethodHTTP = {
+  GET: `get`,
+  POST: `post`
+};
 
-  var uploadFile = form.querySelector('#upload-file');
-  var editImg = form.querySelector('.img-upload__overlay');
+const HttpStatus = {
+  OK: 200,
+  NOT_FOUND: 404,
+  SERVER_ERROR: 500,
+};
 
-  var previewContainer = editImg.querySelector('.img-upload__preview');
-  var imgPreview = previewContainer.querySelector('img');
+const ErrorMessage = {
+  CONNECT: `Произошла ошибка соединения`,
+  TIMEOUT: `Запрос не успел выполниться за `,
+  RESPONSE: `Статус ответа: `,
+};
+
+const main = document.querySelector(`main`);
+const form = document.querySelector(`.img-upload__form`);
+const uploadButton = form.querySelector(`.img-upload__submit`);
+
+const uploadFile = form.querySelector(`#upload-file`);
+const editImg = form.querySelector(`.img-upload__overlay`);
+
+const previewContainer = editImg.querySelector(`.img-upload__preview`);
+const imgPreview = previewContainer.querySelector(`img`);
 
 
-  var delNodeChilds = function (node) {
-    while (node.firstChild) {
-      node.removeChild(node.firstChild);
-    }
-  };
+function delNodeChilds(node) {
+  while (node.firstChild) {
+    node.removeChild(node.firstChild);
+  }
+}
 
-  window.setup = {
-    PERCENT_SYMBOL: PERCENT_SYMBOL,
-    PIXEL_UNIT: PIXEL_UNIT,
-    Key: Key,
-    ParenthesisText: ParenthesisText,
-    CssStyle: CssStyle,
-    main: main,
-    form: form,
-    uploadButton: uploadButton,
-    uploadFile: uploadFile,
-    editImg: editImg,
-    imgPreview: imgPreview,
-    delNodeChilds: delNodeChilds
-  };
-})();
+
+const Setup = {
+  PERCENT_SYMBOL,
+  PIXEL_UNIT,
+  Key,
+  ParenthesisText,
+  CssStyle,
+  Url,
+  MethodHTTP,
+  HttpStatus,
+  ErrorMessage,
+  main,
+  form,
+  uploadButton,
+  uploadFile,
+  editImg,
+  imgPreview,
+  delNodeChilds
+};
+
+export default Setup;
